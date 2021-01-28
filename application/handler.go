@@ -60,3 +60,16 @@ var stopTransHandler haruka.RequestHandler = func(context *haruka.Context) {
 		"success": true,
 	})
 }
+
+var codecListHandler haruka.RequestHandler = func(context *haruka.Context) {
+	conf := service.GetConfig()
+	list, err := ffmpeg.ReadCodecList(conf)
+	if err != nil {
+		AbortError(context, err, http.StatusInternalServerError)
+		return
+	}
+	context.JSON(map[string]interface{}{
+		"list": list,
+	})
+
+}
