@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/allentom/haruka"
+	"github.com/allentom/haruka/middleware"
 	"github.com/projectxpolaris/youtrans/config"
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
@@ -12,9 +13,11 @@ var Logger = log.New().WithField("scope", "Handler")
 func RunApplication() {
 	e := haruka.NewEngine()
 	e.UseCors(cors.AllowAll())
+	e.UseMiddleware(middleware.NewLoggerMiddleware())
 	e.Router.POST("/tasks", createTransHandler)
 	e.Router.GET("/tasks", taskListHandler)
 	e.Router.POST("/tasks/stop", stopTransHandler)
 	e.Router.GET("/ffmpeg/codec", codecListHandler)
+	e.Router.GET("/ffmpeg/formats", formatListHandler)
 	e.RunAndListen(config.DefaultConfig.Addr)
 }

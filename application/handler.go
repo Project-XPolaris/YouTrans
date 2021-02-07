@@ -62,8 +62,28 @@ var stopTransHandler haruka.RequestHandler = func(context *haruka.Context) {
 }
 
 var codecListHandler haruka.RequestHandler = func(context *haruka.Context) {
-	conf := service.GetConfig()
-	list, err := ffmpeg.ReadCodecList(conf)
+	queryOption := service.CodecQueryOption{}
+	function := context.GetQueryString("fun")
+	switch function {
+	case "encoder":
+		queryOption.Encoding = true
+	case "decoder":
+		queryOption.Decoding = true
+	}
+	codecType := context.GetQueryString("type")
+	switch codecType {
+	case "video":
+		queryOption.Type = service.CodecTypeVideo
+	case "subtitle":
+		queryOption.Type = service.CodecTypeSubtitle
+	case "audio":
+		queryOption.Type = service.CodecTypeAudio
+	}
+	search := context.GetQueryString("search")
+	if len(search) > 0 {
+		queryOption.Search = search
+	}
+	list, err := service.GetCodecList(queryOption)
 	if err != nil {
 		AbortError(context, err, http.StatusInternalServerError)
 		return
@@ -72,4 +92,19 @@ var codecListHandler haruka.RequestHandler = func(context *haruka.Context) {
 		"list": list,
 	})
 
+}
+
+var formatListHandler haruka.RequestHandler = func(context *haruka.Context) {
+	option := &service.QueryFormatOption{
+		Search: context.GetQueryString("search"),
+		Fun:    context.GetQueryString("fun"),
+	}
+	formats, err := service.ReadFormatList(option)
+	if err != nil {
+		AbortError(context, err, http.StatusInternalServerError)
+		return
+	}
+	context.JSON(map[string]interface{}{
+		"list": formats,
+	})
 }
