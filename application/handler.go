@@ -29,6 +29,9 @@ var createTransHandler haruka.RequestHandler = func(context *haruka.Context) {
 		Format:     requestBody.Format,
 		InputPath:  requestBody.Input,
 		OutputPath: requestBody.Output,
+		OnDone: func(task *service.Task) {
+			DefaultYouVideoCallback.CompleteChan <- task
+		},
 	}
 	err = service.DefaultTaskPool.CreatTask(&opts)
 	if err != nil {

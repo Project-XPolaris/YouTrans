@@ -4,6 +4,7 @@ import (
 	"github.com/allentom/transcoder"
 	"github.com/allentom/transcoder/ffmpeg"
 	"github.com/projectxpolaris/youtrans/config"
+	"github.com/rs/xid"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"sync"
@@ -22,7 +23,7 @@ type TaskPool struct {
 }
 
 func (p *TaskPool) CreatTask(option *TaskOption) error {
-	id := "123"
+	id := xid.New().String()
 	task := &Task{
 		Id:       id,
 		Option:   option,
@@ -75,6 +76,7 @@ type TaskOption struct {
 	Format     string
 	InputPath  string
 	OutputPath string
+	OnDone     func(task *Task)
 }
 type DiscardCloser struct {
 	io.Writer
@@ -117,6 +119,7 @@ func (t *Task) Run() error {
 				t.Logger.Info("interrupt transcode")
 				t.Status = "Stop"
 			} else {
+				t.Option.OnDone(t)
 				t.Logger.Info("transcode done")
 				t.Status = "Done"
 			}

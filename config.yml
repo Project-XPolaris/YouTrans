@@ -1,2 +1,4 @@
-ffmpeg: "/usr/bin/ffmpeg"
-ffprobe: "/usr/bin/ffprobe"
+ffmpeg: "ffmpeg"
+ffprobe: "ffprobe"
+youvideourl: "http://localhost:7700"
+youvideoenable: true
