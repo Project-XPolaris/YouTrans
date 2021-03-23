@@ -33,7 +33,12 @@ func (p *TaskPool) CreatTask(option *TaskOption) error {
 			"id":    id,
 		}),
 	}
-	go task.Run()
+	go func() {
+		err := task.Run()
+		if err != nil {
+			task.Logger.Error(err)
+		}
+	}()
 	p.Lock()
 	p.Tasks = append(p.Tasks, task)
 	p.Unlock()
@@ -89,6 +94,7 @@ func (t *Task) Run() error {
 	opts := ffmpeg.Options{
 		OutputFormat: &t.Option.Format,
 		Overwrite:    &t.Option.Overwrite,
+		VideoCodec:   t.Option.Option.VideoCodec,
 	}
 
 	ffmpegConf := &ffmpeg.Config{
