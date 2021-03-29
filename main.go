@@ -15,6 +15,6 @@ func main() {
 	}
 	Logger.WithField("action", "load config").Info("success load config")
 	go application.DefaultYouVideoCallback.Start()
-	Logger.Info("YouVideo Url = " + config.DefaultConfig.YouVideoUrl)
+	Logger.Info("YouVideo Url = " + config.Instance.YouVideoUrl)
 	application.RunApplication()
 }

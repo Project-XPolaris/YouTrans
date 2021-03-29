@@ -15,7 +15,7 @@ type YouVideoClient struct {
 }
 
 func (c *YouVideoClient) GetUrl(path string) string {
-	return fmt.Sprintf("%s/%s", config.DefaultConfig.YouVideoUrl, path)
+	return fmt.Sprintf("%s/%s", config.Instance.YouVideoUrl, path)
 }
 
 func (c *YouVideoClient) makePOSTRequest(url string, data interface{}, responseBody interface{}) error {

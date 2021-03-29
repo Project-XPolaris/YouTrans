@@ -98,8 +98,8 @@ func (t *Task) Run() error {
 	}
 
 	ffmpegConf := &ffmpeg.Config{
-		FfmpegBinPath:   config.DefaultConfig.FfmpegBin,
-		FfprobeBinPath:  config.DefaultConfig.FfprobeBin,
+		FfmpegBinPath:   config.Instance.FfmpegBin,
+		FfprobeBinPath:  config.Instance.FfprobeBin,
 		ProgressEnabled: true,
 	}
 	trans := ffmpeg.

@@ -17,7 +17,8 @@ func RunApplication() {
 	e.Router.GET("/tasks", taskListHandler)
 	e.Router.POST("/tasks", createTransHandler)
 	e.Router.POST("/tasks/stop", stopTransHandler)
-	e.Router.GET("/ffmpeg/codec", codecListHandler)
-	e.Router.GET("/ffmpeg/formats", formatListHandler)
-	e.RunAndListen(config.DefaultConfig.Addr)
+	e.Router.GET("/ffmpeg/codec", getCodecsHandler)
+	e.Router.GET("/ffmpeg/formats", getFormatsHandler)
+	e.Router.GET("/info", infoHandler)
+	e.RunAndListen(config.Instance.Addr)
 }

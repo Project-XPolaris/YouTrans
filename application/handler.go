@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/allentom/haruka"
+	"github.com/allentom/haruka/serializer"
 	"github.com/allentom/transcoder/ffmpeg"
 	"github.com/projectxpolaris/youtrans/service"
 	"net/http"
@@ -64,50 +65,48 @@ var stopTransHandler haruka.RequestHandler = func(context *haruka.Context) {
 	})
 }
 
-var codecListHandler haruka.RequestHandler = func(context *haruka.Context) {
-	queryOption := service.CodecQueryOption{}
-	function := context.GetQueryString("fun")
-	switch function {
-	case "encoder":
-		queryOption.Encoding = true
-	case "decoder":
-		queryOption.Decoding = true
+var getCodecsHandler haruka.RequestHandler = func(context *haruka.Context) {
+	queryBuilder := service.CodecsQueryBuilder{}
+	err := context.BindingInput(&queryBuilder)
+	if err != nil {
+		AbortError(context, err, http.StatusBadRequest)
+		return
 	}
-	codecType := context.GetQueryString("type")
-	switch codecType {
-	case "video":
-		queryOption.Type = service.CodecTypeVideo
-	case "subtitle":
-		queryOption.Type = service.CodecTypeSubtitle
-	case "audio":
-		queryOption.Type = service.CodecTypeAudio
-	}
-	search := context.GetQueryString("search")
-	if len(search) > 0 {
-		queryOption.Search = search
-	}
-	list, err := service.GetCodecList(queryOption)
+	codecs, err := queryBuilder.Query()
 	if err != nil {
 		AbortError(context, err, http.StatusInternalServerError)
 		return
 	}
-	context.JSON(map[string]interface{}{
-		"list": list,
+	result := serializer.SerializeMultipleTemplate(codecs, &BaseCodecTemplate{}, nil)
+	context.JSON(haruka.JSON{
+		"codecs": result,
 	})
 
 }
 
-var formatListHandler haruka.RequestHandler = func(context *haruka.Context) {
-	option := &service.QueryFormatOption{
-		Search: context.GetQueryString("search"),
-		Fun:    context.GetQueryString("fun"),
+var getFormatsHandler haruka.RequestHandler = func(context *haruka.Context) {
+	queryBuilder := service.FormatsQueryBuilder{}
+	err := context.BindingInput(&queryBuilder)
+	if err != nil {
+		AbortError(context, err, http.StatusBadRequest)
+		return
 	}
-	formats, err := service.ReadFormatList(option)
+	formats, err := queryBuilder.Query()
 	if err != nil {
 		AbortError(context, err, http.StatusInternalServerError)
 		return
 	}
-	context.JSON(map[string]interface{}{
-		"list": formats,
+	result := serializer.SerializeMultipleTemplate(formats, &BaseFormatTemplate{}, nil)
+	context.JSON(haruka.JSON{
+		"formats": result,
 	})
+
+}
+
+var infoHandler haruka.RequestHandler = func(context *haruka.Context) {
+	context.JSON(haruka.JSON{
+		"success": true,
+		"name":    "YouTrans",
+	})
+
 }

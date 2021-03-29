@@ -2,7 +2,7 @@ package config
 
 import "github.com/spf13/viper"
 
-var DefaultConfig = ApplicationConfig{}
+var Instance = ApplicationConfig{}
 
 type ApplicationConfig struct {
 	FfmpegBin      string
@@ -27,10 +27,10 @@ func LoadConfig() error {
 	conf.SetDefault("ffprobe", "/usr/bin/ffprobe")
 	conf.SetDefault("youvideo_enable", false)
 	conf.SetDefault("addr", ":6700")
-	DefaultConfig.FfmpegBin = conf.GetString("ffmpeg")
-	DefaultConfig.FfprobeBin = conf.GetString("ffprobe")
-	DefaultConfig.Addr = conf.GetString("addr")
-	DefaultConfig.YouVideoUrl = conf.GetString("youvideourl")
-	DefaultConfig.YouvideoEnable = conf.GetBool("youvideoenable")
+	Instance.FfmpegBin = conf.GetString("ffmpeg")
+	Instance.FfprobeBin = conf.GetString("ffprobe")
+	Instance.Addr = conf.GetString("addr")
+	Instance.YouVideoUrl = conf.GetString("youvideourl")
+	Instance.YouvideoEnable = conf.GetBool("youvideoenable")
 	return nil
 }
